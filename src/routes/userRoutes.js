@@ -1,11 +1,11 @@
 const express = require('express');
-const { 
-    signup, 
-    signin, 
-    signout, 
-    signoutall, 
+const {
+    signup,
+    signin,
+    signout,
+    signoutall,
     deleteAccount,
-    registerFarm 
+    registerFarm
 } =  require('../services/AppService')
 const requireAuthorization = require('../middleware/requireAuth');
 
@@ -25,7 +25,7 @@ router
             return res.status(201).json({ status: 201, error: true, message: 'sucessfull', user})
 
         } catch (error) {
-            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})            
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }
     })
 
@@ -34,10 +34,12 @@ router
             const {email, password } = req.body;
             const {user, token} = await signin(email, password)
 
+            console.log(user);
             return res.status(200).json({ status: 200, error: true, message: 'sucessfull', user, token})
 
         } catch (error) {
-            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})            
+            console.log(error.message);
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }
     })
 
@@ -51,7 +53,7 @@ router
             return res.status(200).json({ status: 200, error: true, message: 'sucessfull'})
 
         } catch (error) {
-            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})            
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }
     })
 
@@ -65,7 +67,7 @@ router
             return res.status(200).json({ status: 200, error: true, message: 'sucessfull'})
 
         } catch (error) {
-            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})            
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }
     })
 
@@ -89,7 +91,7 @@ router
 
             return res.status(200).json({ status: 200, error: true, message: 'sucessfull', user})
         } catch (error) {
-            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})            
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }
     })
 
@@ -101,7 +103,7 @@ router
 
             return res.status(201).json({ status: 201, error: true, message: 'sucessfull', farm})
         } catch (error) {
-            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})            
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }
     })
 
