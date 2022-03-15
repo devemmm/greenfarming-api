@@ -25,18 +25,14 @@ const farmSchema = mongoose.Schema({
     village: {
         type: String,
         trim: true
-    },
-    humidities:{
-        type: Array,
-        default: []
     }
 },{
     timestamps: true
 });
 
 
-farmSchema.virtual('humidity', {
-    ref: 'Humidity',
+farmSchema.virtual('farmData', {
+    ref: 'FarmData',
     localField: '_id',
     foreignField: 'fid'
 })

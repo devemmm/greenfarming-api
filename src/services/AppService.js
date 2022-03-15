@@ -1,5 +1,5 @@
 const User = require('../models/User')
-const Humidity = require('../models/Humidity')
+const FarmData = require('../models/FarmData')
 const Farm = require('../models/Farm')
 
 const signup = async(userInformation)=>{
@@ -115,15 +115,25 @@ const registerFarm = async(farmDetails)=>{
 
 
 
-// ----------------------- HUMIDITY -----------------------------------
-const notifyHumidity = async(humidityDetails)=>{
+// ----------------------- farm data -----------------------------------
+const notifyFarm = async(data)=>{
     try {
-        const {fid, temperature, heater, fun, status } = humidityDetails
 
-        if(!fid || !temperature || !heater || !fun || !status){
+        const {fid, temperature, heater, fun , humidity} = data
+
+        if(!fid || heater === undefined || fun === undefined || !temperature  || !humidity){
             throw new Error('missing required values')
         }
 
+
+        if(fun >1 || fun <0 || heater >1 || heater <0){
+            throw new Error("wrong_data_values both fun and heater values must be 0 or 1")
+        }
+
+        if(fun === heater){
+            throw new Error("wrong_data_values both fun and heater can not be ON at the same_time")
+        }
+     
         if(fid.length !== 24){
             throw new Error('wrong farm')
         }
@@ -134,15 +144,32 @@ const notifyHumidity = async(humidityDetails)=>{
             throw new Error('Farm not found');
         }
 
-        const humidity = new Humidity({
-            ...humidityDetails
+
+        const farmData = new FarmData({
+            ...data
         });
 
-        farm.humidities = farm.humidities.concat(humidity._id);
+        return await farmData.save();
 
-        await farm.save();
-        return await humidity.save();
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
 
+const checkFarmData = async({type, fid})=>{
+
+    try {
+
+
+        const query = type === "all" ? {fid: fid} : {}
+
+        const farmData = await FarmData.find({fid})
+
+        if(!type && type !== "all"){
+            return farmData[0]
+        }
+
+        return farmData
     } catch (error) {
         throw new Error(error.message);
     }
@@ -163,5 +190,6 @@ module.exports = {
     signoutall, 
     deleteAccount,
     registerFarm,
-    notifyHumidity 
+    notifyFarm,
+    checkFarmData
 }
