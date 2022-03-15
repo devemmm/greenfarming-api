@@ -164,8 +164,9 @@ const checkFarmData = async({type, fid})=>{
         const query = type === "all" ? {fid: fid} : {}
 
         const farmData = await FarmData.find({fid})
+        console.log(type)
 
-        if(!type && type !== "all"){
+        if(!type || type ==="last"){
             return farmData[0]
         }
 
