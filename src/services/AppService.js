@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const FarmData = require('../models/FarmData')
 const Farm = require('../models/Farm')
+const _ = require('lodash')
 
 const signup = async(userInformation)=>{
     try {
@@ -130,7 +131,7 @@ const notifyFarm = async(data)=>{
             throw new Error("wrong_data_values both fun and heater values must be 0 or 1")
         }
 
-        if(fun === heater){
+        if(fun === heater === 1){
             throw new Error("wrong_data_values both fun and heater can not be ON at the same_time")
         }
      
@@ -156,6 +157,20 @@ const notifyFarm = async(data)=>{
     }
 }
 
+
+const formatDate =  (timeStamp)=>{
+
+    const timeStamps = new Date(timeStamp);
+    const year = timeStamps.getFullYear();
+    const month = timeStamps.getMonth();
+    const dates = timeStamps.getDate();
+
+    const date = `${year}-${month}-${dates}`
+
+    return {
+        date
+    }
+}
 const checkFarmData = async({type, fid})=>{
 
     try {
@@ -169,7 +184,27 @@ const checkFarmData = async({type, fid})=>{
             return farmData.length === 0 ? farmData [0] : farmData[farmData.length - 1]
         }
 
-        return farmData
+        const farmPeriodaDateActionFilter = []
+        const farmPeriodaDateAction = []
+
+        farmData.map((item)=>{
+            const fmDate = formatDate(item.createdAt).date
+            const isAlreadyIn = _.includes(farmPeriodaDateActionFilter, fmDate)
+
+            if(!isAlreadyIn){
+                farmPeriodaDateActionFilter.push(fmDate)
+            }
+        })
+
+        farmPeriodaDateActionFilter.map(dt=>{
+            const action = farmData.filter((item)=> formatDate(item.createdAt).date === dt)
+            farmPeriodaDateAction.push({
+                date: dt,
+                action: action
+            })
+        })
+
+        return farmPeriodaDateAction
     } catch (error) {
         throw new Error(error.message);
     }
