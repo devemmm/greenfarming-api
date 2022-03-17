@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const FarmData = require('../models/FarmData')
 const Farm = require('../models/Farm')
+const Disease = require('../models/Disease')
 const _ = require('lodash')
 
 const signup = async(userInformation)=>{
@@ -172,13 +173,11 @@ const formatDate =  (timeStamp)=>{
     }
 }
 const checkFarmData = async({type, fid})=>{
-
     try {
-
-
         const query = type === "all" ? {fid: fid} : {}
 
-        const farmData = await FarmData.find({fid})
+        const farmDataa = await FarmData.find({fid})
+        const farmData = _.reverse(farmDataa)
 
         if(!type || type ==="last"){
             return farmData.length === 0 ? farmData [0] : farmData[farmData.length - 1]
@@ -211,7 +210,35 @@ const checkFarmData = async({type, fid})=>{
 }
 
 
+// ---------------------TRANDING DISEASE -------------------------------
 
+const getAllDisease = async ()=>{
+    try {
+        const diseases = await Disease.find({})
+        return {
+            count: diseases.length,
+            diseases: _.reverse(diseases),
+        }
+    } catch (error) {
+        throw new Error(error.message);
+    }
+
+}
+const registerDisease = async(data)=>{
+    try {
+        const { name, type, image} = data;
+
+        if(!name || !type || !image){
+            throw new Error('missing required values please check in your inputes')
+        }
+
+        const disease = new Disease({...data})
+
+        return await disease.save();
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
 
 
 
@@ -226,5 +253,7 @@ module.exports = {
     deleteAccount,
     registerFarm,
     notifyFarm,
-    checkFarmData
+    checkFarmData,
+    getAllDisease,
+    registerDisease
 }
