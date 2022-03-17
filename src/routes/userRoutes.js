@@ -7,7 +7,8 @@ const {
     deleteAccount,
     registerFarm,
     getAllDisease,
-    registerDisease
+    registerDisease,
+    updateAccout
 } =  require('../services/AppService')
 const requireAuthorization = require('../middleware/requireAuth');
 
@@ -68,6 +69,16 @@ router
             }
             return res.status(200).json({ status: 200, error: false, message: 'sucessfull'})
 
+        } catch (error) {
+            res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
+        }
+    })
+
+    .post('/users/update/:type' , requireAuthorization, async(req, res)=>{
+
+        try {
+            const user = await updateAccout({user: req.user, data: req.body, type: req.params.type})
+            return res.status(200).json({ status: 200, error: false, message: 'sucessfull', user})
         } catch (error) {
             res.status(400).json({ status: 400, error: true, message: 'failed', errorMessage: error.message})
         }

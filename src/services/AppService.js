@@ -114,6 +114,36 @@ const registerFarm = async(farmDetails)=>{
     }
 }
 
+const updateAccout = async({user, data, type})=>{
+
+    try {
+        const userData = await User.findById(user._id)
+        const {fname, lname, phone, password, oldPassword } = data
+        switch(type){
+            case 'profile':
+                if(!fname || !lname || !phone){
+                    throw new Error('wrong updates please check your inputes field')
+                }
+                userData.fname = fname
+                userData.lname = lname;
+                userData.phone = phone;
+
+                await userData.save()
+                delete userData.tokens
+                delete userData.password
+
+                return  userData;
+
+            default:
+                delete userData.tokens
+                delete userData.password
+
+                return userData;
+        }
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
 
 
 
@@ -255,5 +285,6 @@ module.exports = {
     notifyFarm,
     checkFarmData,
     getAllDisease,
-    registerDisease
+    registerDisease,
+    updateAccout
 }
