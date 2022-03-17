@@ -224,9 +224,7 @@ const checkFarmData = async ({ type, fid }) => {
     const farmData = _.reverse(farmDataa);
 
     if (!type || type === "last") {
-      return farmData.length === 0
-        ? farmData[0]
-        : farmData[farmData.length - 1];
+      return farmData[0];
     }
 
     const farmPeriodaDateActionFilter = [];
