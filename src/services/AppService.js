@@ -144,7 +144,7 @@ const updateAccout = async ({ user, data, type }) => {
 
         userData.password = password;
         await userData.save();
-        return "password changed sucessfull";
+        return { response: "password changed sucessfull" };
 
       default:
         delete userData.tokens;
