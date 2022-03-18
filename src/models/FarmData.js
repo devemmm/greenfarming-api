@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Utils = require('../helpers/Utils')
 const farmDataSchema = mongoose.Schema({
     fid: {
         type: mongoose.Schema.Types.ObjectId,
@@ -28,9 +28,15 @@ const farmDataSchema = mongoose.Schema({
         type: String,
         trim: true,
         default: 'success'
+    },
+    createdAt:{
+        type: String,
+        default: new Utils().rightNow()
+    },
+    updatedAt:{
+        type: String,
+        default: new Utils().rightNow()
     }
-},{
-    timestamps: true
 });
 
 const FarmData = mongoose.model('FarmData', farmDataSchema);

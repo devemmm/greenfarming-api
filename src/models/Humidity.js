@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Utils = require('../helpers/Utils')
 
 const humiditySchema = mongoose.Schema({
     fid: {
@@ -21,9 +22,15 @@ const humiditySchema = mongoose.Schema({
     status: {
         type: String,
         trim: true
+    },
+    createdAt:{
+        type: String,
+        default: new Utils().rightNow()
+    },
+    updatedAt:{
+        type: String,
+        default: new Utils().rightNow()
     }
-}, {
-    timestamps: true
 });
 
 const Farm = mongoose.model('Humidity', humiditySchema);

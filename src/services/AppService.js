@@ -205,15 +205,8 @@ const notifyFarm = async (data) => {
 };
 
 const formatDate = (timeStamp) => {
-  const timeStamps = new Date(timeStamp);
-  const year = timeStamps.getFullYear();
-  const month = timeStamps.getMonth();
-  const dates = timeStamps.getDate();
-
-  const date = `${year}-${month}-${dates}`;
-
   return {
-    date,
+    date: timeStamp.split('T')[0],
   };
 };
 const checkFarmData = async ({ type, fid }) => {

@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Utils = require('../helpers/Utils')
+
 
 const userSchema = mongoose.Schema(
   {
@@ -57,9 +59,14 @@ const userSchema = mongoose.Schema(
         },
       },
     ],
-  },
-  {
-    timestamps: true,
+    createdAt:{
+      type: String,
+      default: new Utils().rightNow()
+    },
+    updatedAt:{
+      type: String,
+      default: new Utils().rightNow()
+    }
   }
 );
 

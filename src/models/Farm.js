@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Utils = require('../helpers/Utils')
 
 const farmSchema = mongoose.Schema({
     uid: {
@@ -25,9 +26,15 @@ const farmSchema = mongoose.Schema({
     village: {
         type: String,
         trim: true
+    },
+    createdAt:{
+        type: String,
+        default: new Utils().rightNow()
+    },
+    updatedAt:{
+        type: String,
+        default: new Utils().rightNow()
     }
-},{
-    timestamps: true
 });
 
 

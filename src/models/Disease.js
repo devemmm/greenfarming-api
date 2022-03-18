@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Utils = require('../helpers/Utils')
 
 const diseaseSchema = new mongoose.Schema({
     name: {
@@ -15,9 +16,15 @@ const diseaseSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true
+    },
+    createdAt:{
+        type: String,
+        default: new Utils().rightNow()
+    },
+    updatedAt:{
+        type: String,
+        default: new Utils().rightNow()
     }
-}, {
-    timestamps: true
 })
 
 const Disease = mongoose.model('Disease', diseaseSchema)
