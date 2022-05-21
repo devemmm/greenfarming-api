@@ -1,9 +1,13 @@
+const fs = require("fs");
+const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const FarmData = require("../models/FarmData");
 const Farm = require("../models/Farm");
 const Disease = require("../models/Disease");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const json2xls = require("json2xls");
+const filename = "GREEN-FARMING-report.xlsx";
 
 const signup = async (userInformation) => {
   try {
@@ -206,16 +210,88 @@ const notifyFarm = async (data) => {
 
 const formatDate = (timeStamp) => {
   return {
-    date: timeStamp.split('T')[0],
+    date: timeStamp.split("T")[0],
   };
 };
-const checkFarmData = async ({ type, fid }) => {
+
+const convert = function (responses) {
+  var xls = json2xls(responses);
+  fs.writeFileSync(filename, xls, "binary", (err) => {
+    if (err) {
+      console.log("writeFileSync :", err);
+    }
+    console.log(filename + " file is saved!");
+  });
+};
+
+const checkFarmData = async ({ type, fid, report, email }) => {
   try {
     const query = type === "all" ? { fid: fid } : {};
 
-    const farmDataa = await FarmData.find({ fid });
+    const farm = await Farm.findById(fid);
+    const farmDataa = await FarmData.find({ fid }).lean();
     const farmData = _.reverse(farmDataa);
 
+    farmData.map((item) => {
+      item.province = farm.province;
+      item.district = farm.district;
+      item.sector = farm.sector;
+      item.cell = farm.cell;
+      item.village = farm.village;
+    });
+
+    if (report && email) {
+      convert(farmData);
+
+      const output = `
+            <p>Green Farming Management System Report</p>
+            <h3>Contact Details</h3>
+            <ul>
+                <li>Name: Green Farming Management System</li>
+                <li>Email: admin@gfms.rw</li>
+                <li>Phone: +250 789 030 464</li>
+            </ul>
+            <h3>Message</h3>
+            <p>This is the report was generated on ${new Date()}</p>
+        `;
+
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD,
+        },
+      });
+
+      // Step 2
+      let mailOptions = {
+        from: process.env.EMAIL,
+        to: `${email}`,
+        subject: "Green Farming Management System Report Report",
+        text: "heading",
+        html: output,
+        attachments: [
+          {
+            filename: "GREEN-FARMING-report.xlsx",
+            path: "./GREEN-FARMING-report.xlsx",
+          },
+        ],
+      };
+
+      // Step 3
+      transporter.sendMail(mailOptions, function (err, data) {
+        if (err) {
+          return res.send({ error: err });
+        }
+      });
+
+      return [
+        {
+          message:
+            "report sent to your email please check, and make sure that you have verifyed account ",
+        },
+      ];
+    }
     if (!type || type === "last") {
       return farmData[0];
     }
